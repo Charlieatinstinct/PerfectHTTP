@@ -3,26 +3,34 @@
 
 import PackageDescription
 
+#if os(Linux)
 let package = Package(
     name: "PerfectHTTP",
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "PerfectHTTP",
-            targets: ["PerfectHTTP"]),
+        .library(name: "PerfectHTTP", targets: ["PerfectHTTP"])
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/PerfectlySoft/PerfectLib.git", from: "3.0.0"),
+        .package(url: "https://github.com/PerfectlySoft/Perfect-Net.git", from: "3.0.0"),
+        .package(url: "https://github.com/PerfectlySoft/Perfect-LinuxBridge.git", from: "3.0.0")
     ],
-    targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .target(
-            name: "PerfectHTTP",
-            dependencies: []),
-        .testTarget(
-            name: "PerfectHTTPTests",
-            dependencies: ["PerfectHTTP"]),
-    ]
+     targets: [
+        .target(name: "PerfectHTTP", dependencies: ["PerfectLib", .product(name: "PerfectNet", package: "Perfect-Net"), "LinuxBridge"]),
+        .testTarget(name: "PerfectHTTPTests", dependencies: ["PerfectHTTP", .product(name: "PerfectNet", package: "Perfect-Net")])
+  ]
 )
+#else
+let package = Package(
+    name: "PerfectHTTP",
+    products: [
+        .library(name: "PerfectHTTP", targets: ["PerfectHTTP"])
+    ],
+    dependencies: [
+        .package(url: "https://github.com/PerfectlySoft/PerfectLib.git", from: "3.0.0"),
+        .package(url: "https://github.com/PerfectlySoft/Perfect-Net.git", from: "3.0.0")
+    ], targets: [
+        .target(name: "PerfectHTTP", dependencies: ["PerfectLib", .product(name: "PerfectNet", package: "Perfect-Net")]),
+        .testTarget(name: "PerfectHTTPTests", dependencies: ["PerfectHTTP", .product(name: "PerfectNet", package: "Perfect-Net")])
+  ]
+)
+#endif
